@@ -49,3 +49,16 @@ dart run build_runner build
 build_runner will generate a file with a name based on the file containing the @GenerateNiceMocks annotation. In the above cat.dart example, we import the generated library as cat.mocks.dart.
 
 The generated mock class, MockCat, extends Mockito's Mock class and implements the Cat class, giving us a class which supports stubbing and verifying.
+
+## Tools
+VSCode extensions [https://resocoder.com/2019/07/04/vs-code-extensions-every-flutter-developer-should-have/]
+
+BLoC deeply explaination [https://resocoder.com/2019/06/12/bloc-library-updated-painless-state-management-for-flutter/]
+
+Enable Guide Lines in Visual Studio Code with Flutter
+```
+GoTo VS code setting => search: PreviewUI => check Dart:Preview flutter Ui Guides and Dart: Preview Flutter Ui Guides Custom Tracking
+```
+
+## Learn about new BLoC Library
+Read at [https://resocoder.com/2019/10/26/flutter-bloc-library-tutorial-1-0-0-stable-reactive-state-management/]
