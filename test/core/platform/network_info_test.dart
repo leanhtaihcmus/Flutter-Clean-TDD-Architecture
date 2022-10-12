@@ -6,7 +6,7 @@ import 'package:number_trivia/core/platform/network_info.dart';
 
 import 'network_info_test.mocks.dart';
 
-@GenerateMocks([InternetConnectionChecker])
+@GenerateNiceMocks([MockSpec<InternetConnectionChecker>()])
 void main() {
   late NetworkInfoImpl networkInfo;
   late MockInternetConnectionChecker mockInternetConnectionChecker;

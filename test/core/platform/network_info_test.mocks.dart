@@ -46,14 +46,14 @@ class _FakeAddressCheckResult_1 extends _i1.SmartFake
 /// See the documentation for Mockito's code generation for more information.
 class MockInternetConnectionChecker extends _i1.Mock
     implements _i2.InternetConnectionChecker {
-  MockInternetConnectionChecker() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   Duration get checkInterval => (super.noSuchMethod(
         Invocation.getter(#checkInterval),
         returnValue: _FakeDuration_0(
+          this,
+          Invocation.getter(#checkInterval),
+        ),
+        returnValueForMissingStub: _FakeDuration_0(
           this,
           Invocation.getter(#checkInterval),
         ),
@@ -65,11 +65,16 @@ class MockInternetConnectionChecker extends _i1.Mock
           this,
           Invocation.getter(#checkTimeout),
         ),
+        returnValueForMissingStub: _FakeDuration_0(
+          this,
+          Invocation.getter(#checkTimeout),
+        ),
       ) as Duration);
   @override
   List<_i2.AddressCheckOptions> get addresses => (super.noSuchMethod(
         Invocation.getter(#addresses),
         returnValue: <_i2.AddressCheckOptions>[],
+        returnValueForMissingStub: <_i2.AddressCheckOptions>[],
       ) as List<_i2.AddressCheckOptions>);
   @override
   set addresses(List<_i2.AddressCheckOptions>? value) => super.noSuchMethod(
@@ -83,6 +88,7 @@ class MockInternetConnectionChecker extends _i1.Mock
   _i3.Future<bool> get hasConnection => (super.noSuchMethod(
         Invocation.getter(#hasConnection),
         returnValue: _i3.Future<bool>.value(false),
+        returnValueForMissingStub: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);
   @override
   _i3.Future<_i2.InternetConnectionStatus> get connectionStatus =>
@@ -90,22 +96,29 @@ class MockInternetConnectionChecker extends _i1.Mock
         Invocation.getter(#connectionStatus),
         returnValue: _i3.Future<_i2.InternetConnectionStatus>.value(
             _i2.InternetConnectionStatus.connected),
+        returnValueForMissingStub:
+            _i3.Future<_i2.InternetConnectionStatus>.value(
+                _i2.InternetConnectionStatus.connected),
       ) as _i3.Future<_i2.InternetConnectionStatus>);
   @override
   _i3.Stream<_i2.InternetConnectionStatus> get onStatusChange =>
       (super.noSuchMethod(
         Invocation.getter(#onStatusChange),
         returnValue: _i3.Stream<_i2.InternetConnectionStatus>.empty(),
+        returnValueForMissingStub:
+            _i3.Stream<_i2.InternetConnectionStatus>.empty(),
       ) as _i3.Stream<_i2.InternetConnectionStatus>);
   @override
   bool get hasListeners => (super.noSuchMethod(
         Invocation.getter(#hasListeners),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
   @override
   bool get isActivelyChecking => (super.noSuchMethod(
         Invocation.getter(#isActivelyChecking),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
   @override
   _i3.Future<_i2.AddressCheckResult> isHostReachable(
@@ -116,6 +129,14 @@ class MockInternetConnectionChecker extends _i1.Mock
           [options],
         ),
         returnValue:
+            _i3.Future<_i2.AddressCheckResult>.value(_FakeAddressCheckResult_1(
+          this,
+          Invocation.method(
+            #isHostReachable,
+            [options],
+          ),
+        )),
+        returnValueForMissingStub:
             _i3.Future<_i2.AddressCheckResult>.value(_FakeAddressCheckResult_1(
           this,
           Invocation.method(
