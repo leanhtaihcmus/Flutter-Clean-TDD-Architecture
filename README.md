@@ -60,5 +60,7 @@ Enable Guide Lines in Visual Studio Code with Flutter
 GoTo VS code setting => search: PreviewUI => check Dart:Preview flutter Ui Guides and Dart: Preview Flutter Ui Guides Custom Tracking
 ```
 
+Install extension of BLoC in vscode [https://marketplace.visualstudio.com/items?itemName=FelixAngelov.bloc]
+
 ## Learn about new BLoC Library
 Read at [https://resocoder.com/2019/10/26/flutter-bloc-library-tutorial-1-0-0-stable-reactive-state-management/]
