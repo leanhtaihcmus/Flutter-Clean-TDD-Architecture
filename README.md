@@ -64,3 +64,26 @@ Install extension of BLoC in vscode [https://marketplace.visualstudio.com/items?
 
 ## Learn about new BLoC Library
 Read at [https://resocoder.com/2019/10/26/flutter-bloc-library-tutorial-1-0-0-stable-reactive-state-management/]
+
+### Unit Test in BLoC
+At this version I can't use test and expectLater from Mockito, so I installed library called bloc_test at [https://pub.dev/packages/bloc_test]
+
+Here's example of BLoC unit test with list of expectLater
+```
+blocTest<NumberTriviaBloc, NumberTriviaState>(
+  'should emmit [Error] when the input is invalid',
+  setUp: () {
+    when(mockInputConverter.stringToUnsignedInteger(any))
+        .thenReturn(Left(InvalidInputFailure()));
+  },
+  build: () => bloc,
+  act: (bloc) => bloc.add(
+    const GetTriviaForConcreteNumber(tNumberString),
+  ),
+  expect: () => [
+    // The inital state is always emitted first
+    Empty(),
+    const Error(message: INVALID_INPUT_FAILURE_MESSAGE),
+  ],
+);
+```

@@ -1,3 +1,4 @@
+import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -43,17 +44,31 @@ void main() {
     final tNumberParsed = int.parse(tNumberString);
     const tNumberTrivia = NumberTrivia(text: 'test trivia', number: 1);
 
-    test(
-        'should call the InputConverter to validate and convert the string to unsigned integer',
-        () async {
-      // arrange
-      when(mockInputConverter.stringToUnsignedInteger(any))
-          .thenReturn(Right(tNumberParsed));
-      // act
-      bloc.add(const GetTriviaForConcreteNumber(tNumberString));
-      await untilCalled(mockInputConverter.stringToUnsignedInteger(any));
-      // assert
-      verify(mockInputConverter.stringToUnsignedInteger(tNumberString));
-    });
+    blocTest<NumberTriviaBloc, NumberTriviaState>(
+      'should call the InputConverter to validate and convert the string to unsigned integer',
+      setUp: () => when(mockInputConverter.stringToUnsignedInteger(any))
+          .thenReturn(Right(tNumberParsed)),
+      build: () => bloc,
+      act: (bloc) => bloc.add(const GetTriviaForConcreteNumber(tNumberString)),
+      verify: (bloc) =>
+          mockInputConverter.stringToUnsignedInteger(tNumberString),
+    );
+
+    blocTest<NumberTriviaBloc, NumberTriviaState>(
+      'should emmit [Error] when the input is invalid',
+      setUp: () {
+        when(mockInputConverter.stringToUnsignedInteger(any))
+            .thenReturn(Left(InvalidInputFailure()));
+      },
+      build: () => bloc,
+      act: (bloc) => bloc.add(
+        const GetTriviaForConcreteNumber(tNumberString),
+      ),
+      expect: () => [
+        // The inital state is always emitted first
+        Empty(),
+        const Error(message: INVALID_INPUT_FAILURE_MESSAGE),
+      ],
+    );
   });
 }
