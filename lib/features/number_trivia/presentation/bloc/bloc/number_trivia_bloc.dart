@@ -1,7 +1,10 @@
+// ignore_for_file: constant_identifier_names, depend_on_referenced_packages
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:number_trivia/core/error/failures.dart';
 
 import 'package:number_trivia/core/util/input_converter.dart';
 import 'package:number_trivia/features/number_trivia/domain/entities/number_trivia.dart';
@@ -31,12 +34,26 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
         final inputEither =
             inputConverter.stringToUnsignedInteger(event.numberString);
 
-        if (inputEither.isLeft()) {
-          emit(Empty());
-          emit(const Error(message: INVALID_INPUT_FAILURE_MESSAGE));
-        } else {
-          // throw UnimplementedError();
-        }
+        inputEither.fold(
+          (falure) {
+            emit(Empty());
+            emit(const Error(message: INVALID_INPUT_FAILURE_MESSAGE));
+          },
+          (integer) async {
+            emit(Empty());
+            emit(Loading());
+            final failureOrTrivia =
+                await getConcreteNumberTrivia(Params(number: integer));
+            failureOrTrivia.fold(
+              (failure) => emit(Error(
+                message: failure is ServerFailure
+                    ? SERVER_FAILURE_MESSAGE
+                    : CACHE_FAILURE_MESSAGE,
+              )),
+              (trivia) => emit(Loaded(trivia: trivia)),
+            );
+          },
+        );
       }
     });
   }

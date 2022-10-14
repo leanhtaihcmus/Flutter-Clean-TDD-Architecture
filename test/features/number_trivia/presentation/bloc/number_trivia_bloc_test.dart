@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:number_trivia/core/error/failures.dart';
 import 'package:number_trivia/core/util/input_converter.dart';
 import 'package:number_trivia/features/number_trivia/domain/entities/number_trivia.dart';
 import 'package:number_trivia/features/number_trivia/domain/usecases/get_concrete_number_trivia.dart';
@@ -44,10 +45,13 @@ void main() {
     final tNumberParsed = int.parse(tNumberString);
     const tNumberTrivia = NumberTrivia(text: 'test trivia', number: 1);
 
+    void setUpMockInputConverterSuccess() =>
+        when(mockInputConverter.stringToUnsignedInteger(any))
+            .thenReturn(Right(tNumberParsed));
+
     blocTest<NumberTriviaBloc, NumberTriviaState>(
       'should call the InputConverter to validate and convert the string to unsigned integer',
-      setUp: () => when(mockInputConverter.stringToUnsignedInteger(any))
-          .thenReturn(Right(tNumberParsed)),
+      setUp: setUpMockInputConverterSuccess,
       build: () => bloc,
       act: (bloc) => bloc.add(const GetTriviaForConcreteNumber(tNumberString)),
       verify: (bloc) =>
@@ -68,6 +72,67 @@ void main() {
         // The inital state is always emitted first
         Empty(),
         const Error(message: INVALID_INPUT_FAILURE_MESSAGE),
+      ],
+    );
+
+    blocTest<NumberTriviaBloc, NumberTriviaState>(
+      'should get data from the concrete use case',
+      build: () => bloc,
+      setUp: () {
+        setUpMockInputConverterSuccess();
+        when(mockGetConcreteNumberTrivia(any))
+            .thenAnswer((_) async => const Right(tNumberTrivia));
+      },
+      act: (bloc) => bloc.add(const GetTriviaForConcreteNumber(tNumberString)),
+      verify: (bloc) =>
+          mockGetConcreteNumberTrivia(Params(number: tNumberParsed)),
+    );
+
+    blocTest<NumberTriviaBloc, NumberTriviaState>(
+      'should emmit [Loading, Loaded] when data is gotten successfully',
+      build: () => bloc,
+      setUp: () {
+        setUpMockInputConverterSuccess();
+        when(mockGetConcreteNumberTrivia(any))
+            .thenAnswer((_) async => const Right(tNumberTrivia));
+      },
+      act: (bloc) => bloc.add(const GetTriviaForConcreteNumber(tNumberString)),
+      expect: () => <NumberTriviaState>[
+        Empty(),
+        Loading(),
+        const Loaded(trivia: tNumberTrivia),
+      ],
+    );
+
+    blocTest<NumberTriviaBloc, NumberTriviaState>(
+      'should emmit [Loading, Error] when getting data fails',
+      build: () => bloc,
+      setUp: () {
+        setUpMockInputConverterSuccess();
+        when(mockGetConcreteNumberTrivia(any))
+            .thenAnswer((_) async => Left(ServerFailure()));
+      },
+      act: (bloc) => bloc.add(const GetTriviaForConcreteNumber(tNumberString)),
+      expect: () => <NumberTriviaState>[
+        Empty(),
+        Loading(),
+        const Error(message: SERVER_FAILURE_MESSAGE),
+      ],
+    );
+
+    blocTest<NumberTriviaBloc, NumberTriviaState>(
+      'should emmit [Loading, Error] with a proper message for the error when getting data fails',
+      build: () => bloc,
+      setUp: () {
+        setUpMockInputConverterSuccess();
+        when(mockGetConcreteNumberTrivia(any))
+            .thenAnswer((_) async => Left(CacheFailure()));
+      },
+      act: (bloc) => bloc.add(const GetTriviaForConcreteNumber(tNumberString)),
+      expect: () => <NumberTriviaState>[
+        Empty(),
+        Loading(),
+        const Error(message: CACHE_FAILURE_MESSAGE),
       ],
     );
   });
