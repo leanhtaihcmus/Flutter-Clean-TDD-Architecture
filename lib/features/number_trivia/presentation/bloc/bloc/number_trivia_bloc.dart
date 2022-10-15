@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:number_trivia/core/error/failures.dart';
+import 'package:number_trivia/core/usecases/usecase.dart';
 
 import 'package:number_trivia/core/util/input_converter.dart';
 import 'package:number_trivia/features/number_trivia/domain/entities/number_trivia.dart';
@@ -31,30 +32,44 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
       : super(Empty()) {
     on<NumberTriviaEvent>((event, emit) async {
       if (event is GetTriviaForConcreteNumber) {
+        emit(Empty());
+        emit(Loading());
         final inputEither =
             inputConverter.stringToUnsignedInteger(event.numberString);
 
         inputEither.fold(
-          (falure) {
-            emit(Empty());
-            emit(const Error(message: INVALID_INPUT_FAILURE_MESSAGE));
-          },
+          (failure) =>
+              emit(const Error(message: INVALID_INPUT_FAILURE_MESSAGE)),
           (integer) async {
-            emit(Empty());
-            emit(Loading());
             final failureOrTrivia =
                 await getConcreteNumberTrivia(Params(number: integer));
             failureOrTrivia.fold(
-              (failure) => emit(Error(
-                message: failure is ServerFailure
-                    ? SERVER_FAILURE_MESSAGE
-                    : CACHE_FAILURE_MESSAGE,
-              )),
+              (failure) => emit(Error(message: _mapFailureToMessage(failure))),
               (trivia) => emit(Loaded(trivia: trivia)),
             );
           },
         );
+      } else if (event is GetTriviaForRandomNumber) {
+        emit(Empty());
+        emit(Loading());
+        final inputEither = await getRandomNumberTrivia(NoPrams());
+
+        inputEither.fold(
+          (failure) => emit(Error(message: _mapFailureToMessage(failure))),
+          (trivia) => emit(Loaded(trivia: trivia)),
+        );
       }
     });
+  }
+
+  String _mapFailureToMessage(Failure failure) {
+    switch (failure.runtimeType) {
+      case ServerFailure:
+        return SERVER_FAILURE_MESSAGE;
+      case CacheFailure:
+        return CACHE_FAILURE_MESSAGE;
+      default:
+        return 'Unexpected Error';
+    }
   }
 }
