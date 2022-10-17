@@ -51,26 +51,7 @@ class NumberTriviaPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               // Bottom half
-              Column(
-                children: <Widget>[
-                  // TextField
-                  const Placeholder(fallbackHeight: 40),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: const <Widget>[
-                      Expanded(
-                        // Search concrete button
-                        child: Placeholder(fallbackHeight: 30),
-                      ),
-                      SizedBox(width: 10),
-                      Expanded(
-                        // Random button
-                        child: Placeholder(fallbackHeight: 30),
-                      )
-                    ],
-                  )
-                ],
-              ),
+              const TriviaControls(),
             ],
           ),
         ),
